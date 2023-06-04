@@ -35,6 +35,16 @@ class MyAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Nick" in response.data.decode())
 
+    def test_get_bookings(self):
+        response = self.app.get('/bookings', headers={'Authorization': 'Basic bGFycnk6MTIzNDU='})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("1" in response.data.decode())
+
+    def test_get_room(self):
+        response = self.app.get('/Room_types', headers={'Authorization': 'Basic bGFycnk6MTIzNDU='})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("Villa" in response.data.decode())
+
 
 if __name__ == "__main__":
     unittest.main()
