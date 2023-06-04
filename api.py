@@ -140,6 +140,31 @@ def add_guest():
     )
 
 
+@app.route("/guests/<int:id>", methods=["PUT"])
+@auth_required
+def update_guest(id):
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    FirstName = info["FirstName"]
+    LastName = info["LastName"]
+    PhoneNumber = info["PhoneNumber"]
+
+    cur.execute(
+        """ UPDATE guest SET FirstName = %s, LastName = %s, PhoneNumber = %s WHERE Guest_Id = %s """,
+        (FirstName, LastName, PhoneNumber, id),
+    )
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "Guest updated successfully", "rows_affected": rows_affected}
+        ),
+        200,
+    )
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
