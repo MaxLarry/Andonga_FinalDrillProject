@@ -164,6 +164,22 @@ def update_guest(id):
     )
 
 
+@app.route("/guests/<int:id>", methods=["DELETE"])
+@auth_required
+def delete_guest(id):
+    cur = mysql.connection.cursor()
+    cur.execute(""" DELETE FROM guest where Guest_Id = %s """, (id,))
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "Guest deleted successfully", "rows_affected": rows_affected}
+        ),
+        200,
+    )
+
+
 
 
 if __name__ == "__main__":
