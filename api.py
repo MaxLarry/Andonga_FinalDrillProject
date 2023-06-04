@@ -113,5 +113,33 @@ def get_booking_ByGuest(id):
     )
 
 
+#Guest route Post
+@app.route("/guests", methods=["POST"])
+@auth_required
+def add_guest():
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    FirstName = info["FirstName"]
+    LastName = info["LastName"]
+    PhoneNumber = info["PhoneNumber"]
+    Email = info["Email"]
+
+    cur.execute(
+        """ INSERT INTO guest (FirstName, LastName,PhoneNumber, Email) VALUE (%s, %s, %s, %s)""",
+        (FirstName, LastName, PhoneNumber, Email),
+    )
+    mysql.connection.commit()
+    print("row(s) affected :{}".format(cur.rowcount))
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "guest added successfully", "rows_affected": rows_affected}
+        ),
+        201,
+    )
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
