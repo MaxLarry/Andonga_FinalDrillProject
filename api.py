@@ -179,6 +179,21 @@ def delete_guest(id):
         200,
     )
 
+# booking and roomtype
+@app.route("/bookings", methods=["GET"])
+@auth_required
+def get_gbooking():
+    data = data_fetch("""select * from booking """)
+    return make_response(jsonify(data), 200)
+
+
+@app.route("/Room_types", methods=["GET"])
+@auth_required
+def get_roomtype():
+    data = data_fetch("""select * from room_type """)
+    return make_response(jsonify(data), 200)
+
+
 
 
 
