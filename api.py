@@ -72,6 +72,45 @@ def get_guest_byID(id):
     return make_response(jsonify(data), 200)
 
 
+#guests search for specific name
+@app.route("/guests/search", methods=["GET"])
+@auth_required
+def search_guests():
+    first_name = request.args.get("firstname")
+    last_name = request.args.get("lastname")
+
+    if not first_name and not last_name:
+        return make_response(jsonify({"error": "Please provide at least first name or last name"}), 400)
+
+    conditions = []
+
+    if first_name:
+        conditions.append(f"FirstName LIKE '%{first_name}%'")
+
+    if last_name:
+        conditions.append(f"LastName LIKE '%{last_name}%'")
+
+   
+    data = data_fetch("SELECT * FROM guest WHERE " + " and ".join(conditions))
+    if not data:
+        return make_response(jsonify({"message": "No data found"}), 200)
+    return make_response(jsonify(data), 200)
+
+#Inner Join
+@app.route("/guests/<int:id>/booking", methods=["GET"])
+@auth_required
+def get_booking_ByGuest(id):
+    data = data_fetch(
+        """
+        select Booking_Id,booking.Guest_Id,Check_In_Date,Check_Out_Date, FirstName,LastNAme,PhoneNumber
+        from guest inner join booking on guest.Guest_Id=booking.Guest_Id 
+        where guest.Guest_Id={}""".format(
+            id
+        )
+    )
+    return make_response(
+        jsonify({"Guest_Id": id, "count": len(data), "booking": data}), 200
+    )
 
 
 if __name__ == "__main__":
