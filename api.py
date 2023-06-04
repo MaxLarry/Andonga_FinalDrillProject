@@ -48,6 +48,31 @@ def Welcome_page():
     return "<p>Welcome to My Final Drill. My name is Larry John</p>"
 
 
+# guest
+@app.route("/guests", methods=["GET"])
+@auth_required
+def get_guest():
+    frmt = request.args.get("format")
+    if frmt == "xml":
+        data = data_fetch("""select * from guest """)
+        xml_data = xmltodict.unparse({"guest": {"guest": data}})
+        response = make_response(xml_data)
+        response.headers["Content-Type"] = "application/xml"
+        return response
+
+    else:
+        data = data_fetch("""select * from guest""")
+        return make_response(jsonify(data), 200)
+
+#guest with guest ID
+@app.route("/guests/<int:id>", methods=["GET"])
+@auth_required
+def get_guest_byID(id):
+    data = data_fetch("""select * from guest Where Guest_Id = {}""".format(id))
+    return make_response(jsonify(data), 200)
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
